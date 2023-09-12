@@ -40,7 +40,7 @@ func NewHub() *Hub {
 		connectors: make(map[string]Reader),
 		event:      make(chan interface{}),
 	}
-	go hub.startConnector()
+	go hub.startReader()
 	go hub.Run()
 	return hub
 }
@@ -154,7 +154,7 @@ func (h *Hub) Broadcast(msg interface{}) {
 	}
 }
 
-func (h *Hub) SetConnector(reader Reader) {
+func (h *Hub) SetReader(reader Reader) {
 	h.readerMutex.RLock()
 	defer h.readerMutex.RUnlock()
 
@@ -165,7 +165,7 @@ func (h *Hub) SetConnector(reader Reader) {
 	}
 }
 
-func (h *Hub) startConnector() {
+func (h *Hub) startReader() {
 	h.readerMutex.RLock()
 	defer h.readerMutex.RUnlock()
 	for _, reader := range h.connectors {
@@ -173,7 +173,7 @@ func (h *Hub) startConnector() {
 	}
 }
 
-func (h *Hub) GetConnector(name string) (Reader, bool) {
+func (h *Hub) GetReader(name string) (Reader, bool) {
 	h.readerMutex.RLock()
 	defer h.readerMutex.RUnlock()
 

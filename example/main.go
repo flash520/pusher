@@ -35,16 +35,16 @@ func main() {
 	config := connector.NewKafkaConfig("group1", "test-topic", "localhost:9092")
 	reader := connector.NewKafkaReader(config)
 	reader.SetChannel(hub.ReceiveChan())
-	hub.SetConnector(reader)
+	hub.SetReader(reader)
 
 	go func() {
 		time.Sleep(time.Second * 5)
-		c, b := hub.GetConnector(reader.Name())
+		c, b := hub.GetReader(reader.Name())
 		if b {
 			c.Stop()
 		}
 	}()
-	// go test()
+	go test()
 
 	_ = app.Run("")
 }
