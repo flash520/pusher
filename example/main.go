@@ -44,9 +44,9 @@ func main() {
 			c.Stop()
 		}
 	}()
-	go test()
+	// go test()
 
-	_ = app.Run(":80")
+	_ = app.Run("")
 }
 
 var upgrader = websocket.Upgrader{}
