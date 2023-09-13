@@ -67,7 +67,7 @@ func test() {
 	time.Sleep(time.Second * 5)
 	logrus.Infof("test start")
 	for i := 0; i < 1000000; i++ {
-		hub.WriteEvent(i)
+		hub.WriteEvent(pusher.NewData("http", i))
 		logrus.Infof("current number: %d", i)
 		time.Sleep(time.Millisecond * 20)
 	}

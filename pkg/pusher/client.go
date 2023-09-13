@@ -40,7 +40,7 @@ type Client interface {
 	User() User
 	SetContext(ctx context.Context, cancelFunc context.CancelFunc)
 	SendMessage(message Message)
-	HandleMessage(msg interface{})
+	HandleMessage(msg Data)
 	AppendTopicHandler(handler Handler)
 	DeleteTopicHandlers([]string)
 	RemoteAddr() string
@@ -196,7 +196,7 @@ func (c *client) DeleteTopicHandlers(topics []string) {
 	}
 }
 
-func (c *client) HandleMessage(msg interface{}) {
+func (c *client) HandleMessage(msg Data) {
 	for _, handler := range c.topics {
 		go handler.Handle(msg, c.user)
 	}

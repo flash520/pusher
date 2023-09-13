@@ -24,7 +24,7 @@ func (c *Car) Name() string {
 	return "Car"
 }
 
-func (c *Car) Handle(msg interface{}, user pusher.User) {
+func (c *Car) Handle(data pusher.Data, user pusher.User) {
 	if user.First() {
 		message := pusher.NewMessage(c.Name(), "这是首次加载数据", user.First())
 		user.Write(message)
@@ -35,7 +35,7 @@ func (c *Car) Handle(msg interface{}, user pusher.User) {
 	// message := pusher.NewMessage(c.Name(), err, user.First())
 	// user.Write(message)
 
-	message := pusher.NewMessage(c.Name(), msg, user.First())
+	message := pusher.NewMessage(c.Name(), data.Raw(), user.First())
 	user.Write(message)
 }
 

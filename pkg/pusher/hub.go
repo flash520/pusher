@@ -20,7 +20,7 @@ import (
 
 type Reader interface {
 	Name() string
-	SetChannel(msg chan<- interface{})
+	SetChannel(msg chan<- Data)
 	Start()
 	Stop()
 }
@@ -31,14 +31,14 @@ type Hub struct {
 	handleRequest HandleRequest
 	readerMutex   sync.RWMutex
 	connectors    map[string]Reader
-	event         chan interface{}
+	event         chan Data
 }
 
 func NewHub() *Hub {
 	hub := &Hub{
 		clients:    make(map[Client]struct{}),
 		connectors: make(map[string]Reader),
-		event:      make(chan interface{}),
+		event:      make(chan Data),
 	}
 	go hub.startReader()
 	go hub.Run()
@@ -140,15 +140,15 @@ func (h *Hub) defaultHandleRequest(msg []byte, client Client) {
 	}
 }
 
-func (h *Hub) ReceiveChan() chan<- interface{} {
+func (h *Hub) ReceiveChan() chan<- Data {
 	return h.event
 }
 
-func (h *Hub) WriteEvent(event interface{}) {
+func (h *Hub) WriteEvent(event Data) {
 	h.event <- event
 }
 
-func (h *Hub) Broadcast(msg interface{}) {
+func (h *Hub) Broadcast(msg Data) {
 	for c := range h.clients {
 		go c.HandleMessage(msg)
 	}

@@ -31,7 +31,7 @@ type Kafka struct {
 	ctx        context.Context
 	cancelFunc context.CancelFunc
 	reader     *kafka.Reader
-	eventChan  chan<- interface{}
+	eventChan  chan<- pusher.Data
 }
 
 func NewKafkaReader(config kafka.ReaderConfig) pusher.Reader {
@@ -48,7 +48,7 @@ func (k *Kafka) Name() string {
 	return "kafka"
 }
 
-func (k *Kafka) SetChannel(channel chan<- interface{}) {
+func (k *Kafka) SetChannel(channel chan<- pusher.Data) {
 	k.eventChan = channel
 }
 
@@ -76,7 +76,7 @@ func (k *Kafka) Start() {
 			time.Sleep(time.Second * 5)
 			continue
 		}
-		k.eventChan <- message
+		k.eventChan <- pusher.NewData("kafka", message)
 	}
 }
 
