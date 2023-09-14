@@ -11,6 +11,8 @@ package main
 import (
 	"context"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/flash520/pusher/pkg/pusher"
 )
 
@@ -24,7 +26,11 @@ func (c *Car) Name() string {
 	return "Car"
 }
 
-func (c *Car) Handle(data pusher.Data, user pusher.User) {
+func (c *Car) Handle(data pusher.Data) {
+	logrus.Infof("%s 开始数据处理, 消息ID: %s", c.Name(), data.ID())
+}
+
+func (c *Car) TopicView(data pusher.Data, user pusher.User) {
 	if user.First() {
 		message := pusher.NewMessage(c.Name(), "这是首次加载数据", user.First())
 		user.Write(message)
@@ -35,6 +41,7 @@ func (c *Car) Handle(data pusher.Data, user pusher.User) {
 	// message := pusher.NewMessage(c.Name(), err, user.First())
 	// user.Write(message)
 
+	logrus.Infof("metadata: %s", data.Metadata().Source())
 	message := pusher.NewMessage(c.Name(), data.Raw(), user.First())
 	user.Write(message)
 }

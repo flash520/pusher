@@ -149,8 +149,18 @@ func (h *Hub) WriteEvent(event Data) {
 }
 
 func (h *Hub) Broadcast(msg Data) {
+	for topic, handler := range defaultTopicHandler.container {
+		go func(topic string, handler Handler) {
+			handler.Handle(msg)
+			h.InvokeTopic(topic, msg)
+		}(topic, handler)
+	}
+
+}
+
+func (h *Hub) InvokeTopic(topic string, msg Data) {
 	for c := range h.clients {
-		go c.HandleMessage(msg)
+		go c.HandleMessage(topic, msg)
 	}
 }
 

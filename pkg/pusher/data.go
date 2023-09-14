@@ -9,39 +9,42 @@
 package pusher
 
 import (
-	"strings"
-
 	"github.com/flash520/pusher/pkg/utils"
 )
 
 type Data interface {
 	ID() string
 	Raw() interface{}
-	MetaData() string
+	Metadata() Metadata
 }
 
 type data struct {
-	Id       string
+	id       string
 	raw      interface{}
-	metaData string
+	metadata Metadata
+}
+
+type Metadata interface {
+	Source() string
+	SetSource(string)
 }
 
 func NewData(source string, msg interface{}) *data {
 	return &data{
-		Id:       utils.RandString(20),
+		id:       utils.RandString(20),
 		raw:      msg,
-		metaData: source,
+		metadata: &metadata{source: source},
 	}
 }
 
 func (d *data) ID() string {
-	return d.Id
+	return d.id
 }
 
 func (d *data) Raw() interface{} {
 	return d.raw
 }
 
-func (d *data) MetaData() string {
-	return strings.ToLower(d.metaData)
+func (d *data) Metadata() Metadata {
+	return d.metadata
 }

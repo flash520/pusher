@@ -40,7 +40,7 @@ type Client interface {
 	User() User
 	SetContext(ctx context.Context, cancelFunc context.CancelFunc)
 	SendMessage(message Message)
-	HandleMessage(msg Data)
+	HandleMessage(topic string, msg Data)
 	AppendTopicHandler(handler Handler)
 	DeleteTopicHandlers([]string)
 	RemoteAddr() string
@@ -173,7 +173,7 @@ func (c *client) AppendTopicHandler(handler Handler) {
 	resp := NewResponse("register", fmt.Sprintf("topic %s subscribe success", handler.Name()))
 	c.SendMessage(resp)
 	c.user.SetFirst(true)
-	handler.Handle(nil, c.user)
+	handler.TopicView(nil, c.user)
 	c.user.SetFirst(false)
 }
 
@@ -196,10 +196,12 @@ func (c *client) DeleteTopicHandlers(topics []string) {
 	}
 }
 
-func (c *client) HandleMessage(msg Data) {
-	for _, handler := range c.topics {
-		go handler.Handle(msg, c.user)
+func (c *client) HandleMessage(topic string, msg Data) {
+	handler, exists := c.topics[strings.ToLower(topic)]
+	if !exists {
+		return
 	}
+	handler.TopicView(msg, c.user)
 }
 
 func (c *client) SendMessage(message Message) {

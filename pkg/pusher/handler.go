@@ -16,7 +16,8 @@ import (
 
 type Handler interface {
 	Name() string
-	Handle(msg Data, user User)
+	Handle(msg Data)
+	TopicView(msg Data, user User)
 	SetContext(ctx context.Context, cancelFunc context.CancelFunc)
 	Clone() Handler
 }
