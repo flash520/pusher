@@ -14,12 +14,14 @@ type User interface {
 	Write(msg Message)
 	SetUser(user interface{})
 	SetFirst(first bool)
+	Close()
 }
 
 type userInfo struct {
-	user  interface{}
-	first bool
-	msg   chan<- Message
+	user   interface{}
+	first  bool
+	closed bool
+	msg    chan<- Message
 }
 
 func (u *userInfo) User() interface{} {
@@ -39,5 +41,16 @@ func (u *userInfo) SetFirst(first bool) {
 }
 
 func (u *userInfo) Write(msg Message) {
-	u.msg <- msg
+	if u.closed {
+		return
+	}
+	select {
+	case u.msg <- msg:
+	default:
+		return
+	}
+}
+
+func (u *userInfo) Close() {
+	u.closed = true
 }

@@ -257,6 +257,7 @@ func (c *client) RemoteAddr() string {
 func (c *client) Close() {
 	c.cancelFunc()
 	_ = c.conn.Close()
+	c.user.Close()
 	close(c.msgChan)
 	logrus.Infof("%s Disconnected", c.conn.RemoteAddr().String())
 }

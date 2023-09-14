@@ -41,7 +41,6 @@ func (c *Car) TopicView(data pusher.Data, user pusher.User) {
 	// message := pusher.NewMessage(c.Name(), err, user.First())
 	// user.Write(message)
 
-	logrus.Infof("metadata: %s", data.Metadata().Source())
 	message := pusher.NewMessage(c.Name(), data.Raw(), user.First())
 	user.Write(message)
 }
